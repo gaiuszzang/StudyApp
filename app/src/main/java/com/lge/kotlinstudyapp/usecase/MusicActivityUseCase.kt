@@ -1,8 +1,11 @@
 package com.lge.kotlinstudyapp.usecase
 
 import android.content.ComponentName
+import android.media.MediaMetadata
 import android.media.browse.MediaBrowser
 import android.media.session.MediaController
+import android.media.session.PlaybackState
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lge.kotlinstudyapp.KotlinStudyApplication
@@ -15,12 +18,31 @@ class MusicActivityUseCase @Inject constructor() {
     companion object {
         private const val TAG = "MusicActivityUseCase"
     }
-    val musicList = MutableLiveData<List<Music>>()
+    private val musicList = MutableLiveData<List<Music>>()
+    private val playMusic = MutableLiveData<Music>()
+    private val playState = MutableLiveData<PlaybackState>()
 
     private val context = KotlinStudyApplication.instance.applicationContext
     private lateinit var mediaBrowser: MediaBrowser
-    private lateinit var mediaController: MediaController
-    private val connectionCallbacks = object : MediaBrowser.ConnectionCallback() {
+    private var mediaController: MediaController? = null
+
+    private val controllerCallback = object : MediaController.Callback() {
+        override fun onMetadataChanged(metadata: MediaMetadata?) {
+            //super.onMetadataChanged(metadata) todo remove
+            logd(TAG, "onMetadataChanged(${metadata?.description?.title ?: "null"})")
+            metadata?.let {
+                playMusic.postValue(mapMediaMetadataToMusic(it))
+            }
+
+        }
+        override fun onPlaybackStateChanged(state: PlaybackState?) {
+            super.onPlaybackStateChanged(state)
+            logd(TAG, "onPlaybackStateChanged($state)")
+            state?.let { playState.postValue(it) }
+        }
+    }
+
+    private val connectionCallback = object : MediaBrowser.ConnectionCallback() {
         override fun onConnected() {
             logd(TAG, "MediaBrowser onConnected")
             // Get the token for the MediaSession
@@ -28,20 +50,16 @@ class MusicActivityUseCase @Inject constructor() {
                 // Create a MediaControllerCompat
                 logd(TAG, "MediaBrowser token = $token")
                 mediaController = MediaController(context, token)
-                // Save the controller
-                //MediaControllerCompat.setMediaController(this@MusicActivity, mediaController)
+                mediaController?.registerCallback(controllerCallback)
             }
-            // Finish building the UI
-            //buildTransportControls()
         }
 
         override fun onConnectionSuspended() {
             logd(TAG, "MediaBrowser suspended : maybe crashed")
-            // The Service has crashed. Disable transport controls until it automatically reconnects
         }
 
         override fun onConnectionFailed() {
-            logd(TAG, "MediaBrowser failed") // The Service has refused our connection
+            logd(TAG, "MediaBrowser failed")
         }
     }
 
@@ -57,7 +75,7 @@ class MusicActivityUseCase @Inject constructor() {
     }
 
     init {
-        mediaBrowser = MediaBrowser(context, ComponentName(context, KTBwMusicService::class.java), connectionCallbacks, null)
+        mediaBrowser = MediaBrowser(context, ComponentName(context, KTBwMusicService::class.java), connectionCallback, null)
         mediaBrowser.subscribe(KTBwMusicService.BROWSER_ROOT_ID, subscriptionCallback)
     }
 
@@ -66,18 +84,43 @@ class MusicActivityUseCase @Inject constructor() {
     }
 
     fun disconnect() {
+        mediaController?.unregisterCallback(controllerCallback)
         mediaBrowser.disconnect()
     }
 
-    fun getMusicListLiveData() : LiveData<List<Music>> {
-        return musicList
-    }
+    fun getMusicListLiveData() : LiveData<List<Music>> = musicList
+    fun getPlayMusicLiveData() : LiveData<Music> = playMusic
+    fun getPlayStateLiveData() : LiveData<PlaybackState> = playState
 
     fun play() {
-        mediaController.transportControls.play()
+        mediaController?.transportControls?.play()
     }
 
-    fun play(idx: Int) {
+    fun play(index: Int) {
+        val bundle = Bundle()
+        bundle.putInt("index", index)
+        mediaController?.sendCommand("PlayIndex", bundle, null)
+    }
 
+    fun pause() {
+        mediaController?.transportControls?.pause()
+    }
+
+    fun skipToNext() {
+        mediaController?.transportControls?.skipToNext()
+    }
+
+    fun skipToPrevious() {
+        mediaController?.transportControls?.skipToPrevious()
+    }
+
+    private fun mapMediaMetadataToMusic(metadata: MediaMetadata) : Music {
+        val id = metadata.getString(MediaMetadata.METADATA_KEY_MEDIA_ID)
+        val url = metadata.getString(MediaMetadata.METADATA_KEY_MEDIA_URI)
+        val artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST)
+        val genre = metadata.getString(MediaMetadata.METADATA_KEY_GENRE)
+        val title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE)
+        val duration = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION).toInt()
+        return Music(id, url, title, artist, genre, duration)
     }
 }

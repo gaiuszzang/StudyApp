@@ -1,10 +1,16 @@
 package com.lge.kotlinstudyapp.usecase
 
 import android.media.AudioAttributes
+import android.media.MediaMetadata
 import android.media.MediaPlayer
+import android.media.session.MediaSession
+import android.media.session.PlaybackState
+import android.os.Bundle
+import android.os.ResultReceiver
 import androidx.annotation.IntDef
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.lge.kotlinstudyapp.KotlinStudyApplication
 import com.lge.kotlinstudyapp.db.Music
 import com.lge.kotlinstudyapp.logd
 import com.lge.kotlinstudyapp.loge
@@ -26,22 +32,106 @@ class MusicServiceUseCase @Inject constructor(private val repo: Repo) {
         annotation class MediaPlayState
     }
 
-    /* for Service */
+    private val parentJob = Job()
+    private val useCaseScope = CoroutineScope(parentJob + Dispatchers.Main)
+    private val context = KotlinStudyApplication.instance.applicationContext
+
     private var musicList : List<Music>? = null
     private val musicListListener = mutableListOf<(List<Music>?) -> Unit>()
-
     private var mediaIdx = 0
     private var mediaPlayer: MediaPlayer? = null
     private var updateProgressJob : Job? = null
     @MediaPlayState var playState : Int = MEDIA_STATE_STOP
-        private set
+        private set(@MediaPlayState state) {
+            field = state
+            notifyPlayStateListener()
+        }
+    private val stateBuilder = PlaybackState.Builder()
+        .setActions(PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE
+                or PlaybackState.ACTION_SKIP_TO_PREVIOUS or PlaybackState.ACTION_SKIP_TO_NEXT
+                or PlaybackState.ACTION_STOP)
 
-    suspend fun updateMusicList() = withContext(Dispatchers.IO) {
-        val list = repo.getMusicList()
-        withContext(Dispatchers.Main) {
-            musicList = list
-            musicListListener.forEach { listener -> listener.invoke(musicList) }
-            musicListListener.clear()
+    lateinit var mediaSession: MediaSession
+    private val sessionCallback = object: MediaSession.Callback() {
+        override fun onPlay() {
+            useCaseScope.launch {
+                if (playState != MEDIA_STATE_PAUSE) {
+                    logd(TAG, "onPlay : begin")
+                    playMusic()
+                } else {
+                    logd(TAG, "onPlay : restart")
+                    restartMusic()
+                }
+            }
+        }
+        override fun onPause() {
+            logd(TAG, "onPause")
+            useCaseScope.launch {
+                pauseMusic()
+            }
+        }
+        override fun onStop() {
+            logd(TAG, "onStop")
+            useCaseScope.launch {
+                stopMusic()
+            }
+        }
+        override fun onSkipToNext() {
+            logd(TAG, "onSkipToNext")
+            useCaseScope.launch {
+                playNextMusic()
+            }
+        }
+        override fun onSkipToPrevious() {
+            logd(TAG, "onSkipToPrevious")
+            useCaseScope.launch {
+                playPrevMusic()
+            }
+        }
+        override fun onCommand(command: String, args: Bundle?, cb: ResultReceiver?) {
+            logd(TAG, "onCommand($command)")
+            when(command) {
+                "PlayIndex" -> {
+                    val idx = args?.getInt("index", 0) ?: 0
+                    useCaseScope.launch {
+                        playMusic(idx)
+                    }
+                }
+            }
+        }
+    }
+    private val playStateListener = object: PlayStateListener {
+        override fun update(state: Int) {
+            when(state) {
+                MEDIA_STATE_PLAY -> {
+                    mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_PLAYING, 0, 1f).build())
+                }
+                MEDIA_STATE_PAUSE -> {
+                    mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_PAUSED, 0, 1f).build())
+                }
+                MEDIA_STATE_PREPARE -> {
+                    mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_BUFFERING, 0, 1f).build())
+                }
+                MEDIA_STATE_STOP -> {
+                    mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_STOPPED, 0, 1f).build())
+                }
+            }
+        }
+    }
+    private val playStateListenerList = mutableListOf<PlayStateListener>()
+
+    interface PlayStateListener {
+        fun update(@MediaPlayState state: Int)
+    }
+
+    fun updateMusicList() {
+        useCaseScope.launch(Dispatchers.IO) {
+            val list = repo.getMusicList()
+            withContext(Dispatchers.Main) {
+                musicList = list
+                musicListListener.forEach { listener -> listener.invoke(musicList) }
+                musicListListener.clear()
+            }
         }
     }
 
@@ -51,34 +141,31 @@ class MusicServiceUseCase @Inject constructor(private val repo: Repo) {
         musicListListener.add(listener)
     }
 
-    suspend fun playNextMusic() {
-        stopMusic()
-        playMusic(mediaIdx + 1)
-    }
     suspend fun playMusic(idx: Int) {
         mediaIdx = idx
-        playMusic()
+        musicList?.apply {
+            if (mediaIdx > (size - 1)) mediaIdx = 0
+            if (mediaIdx < 0) mediaIdx = size - 1
+            playMusic()
+        }
     }
     suspend fun playMusic() = withContext(Dispatchers.Main) {
-        /*
-        TODO
-        01-22 17:37:11.069 31478 31478 W KotlinStudyApp: [MusicServiceUseCase] let's play music 4
-        01-22 17:37:11.102 31478 31478 E AndroidRuntime: FATAL EXCEPTION: main
-        01-22 17:37:11.102 31478 31478 E AndroidRuntime: Process: com.lge.kotlinstudyapp, PID: 31478
-        01-22 17:37:11.102 31478 31478 E AndroidRuntime: java.lang.IndexOutOfBoundsException: Index: 4, Size: 4
-        01-22 17:37:11.102 31478 31478 E AndroidRuntime: 	at java.util.ArrayList.get(ArrayList.java:437)
-        01-22 17:37:11.102 31478 31478 E AndroidRuntime: 	at com.lge.kotlinstudyapp.usecase.MusicServiceUseCase$playMusic$3.invokeSuspend(MusicServiceUseCase.kt:69)
-
-         */
-        if (musicList == null || musicList!!.size < mediaIdx - 1) {
+        if (musicList == null || mediaIdx > (musicList!!.size - 1)) {
             logw(TAG, "musicList null or size < idx")
+            stopMusic()
             return@withContext
         }
         logw(TAG, "let's play music $mediaIdx")
         musicList?.let {
             val music = it[mediaIdx]
-            if (playState == MEDIA_STATE_PLAY) {
-                stopMusic()
+            if (playState == MEDIA_STATE_PLAY || playState == MEDIA_STATE_PAUSE) {
+                //release prev mediaPlayer
+                mediaPlayer?.apply {
+                    stop()
+                    release()
+                    updateProgressJob?.cancelAndJoin()
+                    updateProgressJob = null
+                }
             }
             mediaPlayer = MediaPlayer()
             mediaPlayer?.apply {
@@ -103,20 +190,30 @@ class MusicServiceUseCase @Inject constructor(private val repo: Repo) {
                             false
                         }
                     }) return@let
+                val mediaMetadata = MediaMetadata.Builder()
+                    .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, music.id)
+                    .putString(MediaMetadata.METADATA_KEY_MEDIA_URI, music.url)
+                    .putString(MediaMetadata.METADATA_KEY_ARTIST, music.artist)
+                    .putString(MediaMetadata.METADATA_KEY_GENRE, music.genre)
+                    .putString(MediaMetadata.METADATA_KEY_TITLE, music.title)
+                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, music.artist)
+                    .putLong(MediaMetadata.METADATA_KEY_DURATION, mediaPlayer?.duration?.toLong() ?: 0L)
+                    .build()
+                mediaSession.setMetadata(mediaMetadata)
                 start()
                 playState = MEDIA_STATE_PLAY
                 logd(TAG, "startMusic now start")
-                logd(TAG, "start UpdateProgressJob")
-                updateProgressJob = launch(Dispatchers.Main) {
-                    delay(500)
-                    while (mediaPlayer?.isPlaying == true) {
-                        val progress = mediaPlayer?.currentPosition
-                        logd(TAG, "Music Progress = $progress / ${mediaPlayer?.duration}")
-                        delay(500)
-                    }
-                }
+                enableUpdateProgress()
             }
         }
+    }
+
+    suspend fun playNextMusic() {
+        playMusic(mediaIdx + 1)
+    }
+
+    suspend fun playPrevMusic() {
+        playMusic(mediaIdx - 1)
     }
 
     suspend fun stopMusic() = withContext(Dispatchers.Main) {
@@ -124,33 +221,82 @@ class MusicServiceUseCase @Inject constructor(private val repo: Repo) {
             mediaPlayer?.stop()
             mediaPlayer?.release()
             mediaPlayer = null
+            disableUpdateProgress()
             playState = MEDIA_STATE_STOP
-            updateProgressJob?.cancelAndJoin()
-            updateProgressJob = null
         } else {
-            logw(TAG, "stopMusic : invalid status requested")
+            logw(TAG, "stopMusic : invalid current status $playState")
         }
     }
 
     suspend fun pauseMusic() = withContext(Dispatchers.Main) {
-        mediaPlayer?.let {
+        mediaPlayer?.apply {
             if (playState == MEDIA_STATE_PLAY) {
-                it.pause()
+                pause()
+                disableUpdateProgress()
                 playState = MEDIA_STATE_PAUSE
             } else {
-                logw(TAG, "pauseMusic : invalid status requested")
+                logw(TAG, "pauseMusic : invalid current status $playState")
             }
         }
     }
 
     suspend fun restartMusic() = withContext(Dispatchers.Main) {
-        mediaPlayer?.let {
+        mediaPlayer?.apply {
             if (playState == MEDIA_STATE_PAUSE) {
-                it.start()
+                start()
                 playState = MEDIA_STATE_PLAY
+                enableUpdateProgress()
             } else {
-                logw(TAG, "restartMusic : invalid status requested")
+                logw(TAG, "restartMusic : invalid current status $playState")
             }
         }
+    }
+
+    fun isPlaying(): Boolean = (playState == MEDIA_STATE_PLAY || playState == MEDIA_STATE_PREPARE)
+
+    fun getCurrentMusic(): Music? {
+        return musicList?.get(mediaIdx)
+    }
+
+    fun registerPlayStateListener(listener : PlayStateListener) {
+        playStateListenerList.add(listener)
+        listener.update(playState)
+    }
+
+    fun unregisterPlayStateListener(listener : PlayStateListener) {
+        playStateListenerList.remove(listener)
+    }
+
+    private fun notifyPlayStateListener() {
+        playStateListenerList.forEach { it.update(playState) }
+    }
+
+    fun onInit() {
+        playStateListenerList.add(playStateListener)
+        mediaSession = MediaSession(context, TAG).apply {
+            setPlaybackState(stateBuilder.setState(PlaybackState.STATE_STOPPED, 0, 1f).build())
+            setCallback(sessionCallback)
+        }
+    }
+    fun onDestroy() {
+        parentJob.cancel()
+        playStateListenerList.clear()
+    }
+
+    private suspend fun enableUpdateProgress() = withContext(Dispatchers.Main) {
+        updateProgressJob = launch(Dispatchers.Main) {
+            delay(500)
+            while (mediaPlayer?.isPlaying == true) {
+                val playMs = (mediaPlayer?.currentPosition ?: 0).toLong()
+                logd(TAG, "Music Progress = $playMs / ${mediaPlayer?.duration}")
+                mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_PLAYING, playMs, 1f).build())
+                delay(500)
+            }
+        }
+    }
+
+    private suspend fun disableUpdateProgress() = withContext(Dispatchers.Main) {
+        updateProgressJob?.cancelAndJoin()
+        updateProgressJob = null
     }
 }

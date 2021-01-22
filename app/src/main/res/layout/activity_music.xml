@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data class="MusicBind">
+        <import type="android.view.View"/>
         <variable name="vm" type="com.lge.kotlinstudyapp.activity.MusicViewModel" />
         <variable name="activity" type="com.lge.kotlinstudyapp.activity.MusicActivity" />
     </data>
@@ -12,10 +13,80 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.MainActivity">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lyMediaController"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:padding="15dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <ImageView
+                android:id="@+id/imgSkipNext"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_ff"
+                android:onClick="@{_ -> vm.skipToNext()}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <ImageView
+                android:id="@+id/imgPause"
+                android:visibility="@{vm.playStatePlaying ? View.VISIBLE : View.INVISIBLE}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_pause"
+                android:onClick="@{_ -> vm.pause()}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imgSkipNext"/>
+            <ImageView
+                android:id="@+id/imgPlay"
+                android:visibility="@{!vm.playStatePlaying ? View.VISIBLE : View.INVISIBLE}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_play"
+                android:onClick="@{_ -> vm.play()}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imgSkipNext"/>
+            <ImageView
+                android:id="@+id/imgSkipPrev"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_media_previous"
+                android:onClick="@{_ -> vm.skipToPrevious()}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imgPlay"/>
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="4dp"
+                android:text="@{vm.playMusic.title}"
+                app:layout_constraintTop_toBottomOf="@id/seekBar"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                android:id="@+id/txtArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:text="@{vm.playMusic.artist}"
+                app:layout_constraintTop_toBottomOf="@id/txtTitle"
+                app:layout_constraintStart_toStartOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/musicRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/lyMediaController"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

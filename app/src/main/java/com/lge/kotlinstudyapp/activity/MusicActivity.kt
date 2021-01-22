@@ -37,7 +37,15 @@ class MusicActivity : AppCompatActivity() {
         bind.lifecycleOwner = this
         bind.musicRecyclerView.adapter = musicListAdapter
         vm.musicList.observe(this, { musicListAdapter.setMusicList(it) })
-        musicListAdapter.setMusicItemClickListener { idx, music -> playMusic(idx) }
+        vm.playMusic.observe(this, {
+            bind.seekBar.min = 0
+            bind.seekBar.max = it.duration
+            logd(TAG, "PlayMusic Changed, duration = 0 ~ ${it.duration}")
+        })
+        vm.playPosValue.observe(this, {
+            bind.seekBar.progress = it.toInt()
+        })
+        musicListAdapter.setMusicItemClickListener { idx, music -> vm.play(idx) }
     }
 
     override fun onStart() {
@@ -52,37 +60,6 @@ class MusicActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        // (see "stay in sync with the MediaSession")
-        //todo MediaControllerCompat.getMediaController(this)?.unregisterCallback(controllerCallback)
         vm.disconnect()
     }
-    fun playMusic(idx: Int) {
-        vm.play()
-    }
-/*
-//private val ktMusicService = KTMusicServiceProxy()
-    override fun onStart() {
-        super.onStart()
-        logi(TAG, "onStart()")
-        ktMusicService.bindService(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        logd(TAG, "onStop()")
-        ktMusicService.unbindService(this)
-    }
-
-    private fun playMusic(idx: Int) {
-        ktMusicService.startService(this)
-        ktMusicService.startMusic(idx)
-    }
-    private fun playMusic(music : Music) {
-        ktMusicService.startMusic(music)
-    }
-
-    private fun stopMusic() {
-        ktMusicService.stopMusic()
-    }
- */
 }
