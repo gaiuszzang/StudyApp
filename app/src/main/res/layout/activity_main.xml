@@ -96,11 +96,12 @@
             android:id="@+id/btnTest7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dummy Activity"
             android:onClick="@{_ -> activity.onButton7Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest6"
+            android:text="Dummy Activity"
+            app:layout_constraintHorizontal_bias="0.219"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnTest5" />
         <Button
             android:id="@+id/btnTest8"
             android:layout_width="wrap_content"
@@ -230,5 +231,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnTest18"
             app:layout_constraintTop_toBottomOf="@+id/btnTest17" />
+
+        <Button
+            android:id="@+id/btnTestUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{_ -> activity.onButtonUploadClick()}"
+            android:text="File Upload"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnTest18" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.uploadProgress}"
+            android:layout_margin="10dp"
+            app:layout_constraintStart_toEndOf="@id/btnTestUpload"
+            app:layout_constraintTop_toBottomOf="@+id/btnTest19"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

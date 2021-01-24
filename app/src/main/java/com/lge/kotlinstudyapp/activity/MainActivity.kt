@@ -118,6 +118,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, DummyActivity::class.java)
         startActivity(intent)
     }
+    fun onButtonUploadClick() {
+        vm.uploadFile()
+    }
 
     fun onButton8Click() {
         val testWork = OneTimeWorkRequestBuilder<TestWorker>()

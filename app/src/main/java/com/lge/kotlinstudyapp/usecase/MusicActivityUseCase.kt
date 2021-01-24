@@ -28,7 +28,6 @@ class MusicActivityUseCase @Inject constructor() {
 
     private val controllerCallback = object : MediaController.Callback() {
         override fun onMetadataChanged(metadata: MediaMetadata?) {
-            //super.onMetadataChanged(metadata) todo remove
             logd(TAG, "onMetadataChanged(${metadata?.description?.title ?: "null"})")
             metadata?.let {
                 playMusic.postValue(mapMediaMetadataToMusic(it))

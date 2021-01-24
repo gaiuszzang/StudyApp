@@ -12,8 +12,6 @@ class MusicViewModel @ViewModelInject constructor(private val useCase: MusicActi
     }
     val musicList = useCase.getMusicListLiveData()
     val playMusic = useCase.getPlayMusicLiveData()
-    //val playState = useCase.getPlayStateLiveData()
-    //val playStateInt = Transformations.map(useCase.getPlayStateLiveData()) { it.state }
     val playStatePlaying = Transformations.map(useCase.getPlayStateLiveData()) { it.state == PlaybackState.STATE_PLAYING || it.state == PlaybackState.STATE_BUFFERING }
     val playPosValue = Transformations.map(useCase.getPlayStateLiveData()) { it.position }
 

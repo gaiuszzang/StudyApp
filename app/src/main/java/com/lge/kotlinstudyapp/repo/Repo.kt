@@ -12,10 +12,14 @@ import com.lge.kotlinstudyapp.db.ProductDto
 import com.lge.kotlinstudyapp.logd
 import com.lge.kotlinstudyapp.logw
 import com.lge.kotlinstudyapp.server.AcanelServer
+import com.lge.kotlinstudyapp.server.ProgressRequestBody
 import com.lge.kotlinstudyapp.server.data.DeviceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,6 +52,19 @@ class Repo @Inject constructor() {
             logd(TAG, "result = ${result.result}")
         } catch (e: Exception) {
             logw(TAG, "result = Fail")
+        }
+    }
+
+    suspend fun uploadFile(file: File, listener: ((upsize: Long, totalsize: Long) -> Unit)?) = withContext(Dispatchers.IO) {
+        val fileList = mutableListOf<MultipartBody.Part>()
+        val fileBody = ProgressRequestBody(MediaType.parse("text/plain")!!, file, listener)
+        fileList.add(MultipartBody.Part.createFormData("files", file.name, fileBody))
+        try {
+            val result = AcanelServer.service.postFile(fileList)
+            logd(TAG, "result = ${result.result}")
+        } catch (e: Exception) {
+            logw(TAG, "result = Fail")
+            e.printStackTrace()
         }
     }
 
