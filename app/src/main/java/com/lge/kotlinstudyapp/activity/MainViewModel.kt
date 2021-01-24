@@ -2,10 +2,7 @@ package com.lge.kotlinstudyapp.activity
 
 import android.os.Environment
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.lge.kotlinstudyapp.KotlinStudyApplication
@@ -21,7 +18,7 @@ class MainViewModel @ViewModelInject constructor(private val repo: Repo) : ViewM
     companion object {
         private const val TAG = "MainViewModel"
     }
-    val text = repo.getStoredText()
+    val text = repo.getStoredText().asLiveData()
 
     val testWorkInfo = WorkManager
         .getInstance(KotlinStudyApplication.instance.applicationContext)

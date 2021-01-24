@@ -2,9 +2,7 @@ package com.lge.kotlinstudyapp.repo
 
 import android.os.Build
 import android.os.Environment
-import androidx.lifecycle.LiveData
 import com.lge.kotlinstudyapp.KotlinStudyApplication
-import com.lge.kotlinstudyapp.activity.MainActivity
 import com.lge.kotlinstudyapp.db.AdvertiseDto
 import com.lge.kotlinstudyapp.db.KeyValueData
 import com.lge.kotlinstudyapp.db.Music
@@ -16,6 +14,7 @@ import com.lge.kotlinstudyapp.server.ProgressRequestBody
 import com.lge.kotlinstudyapp.server.data.DeviceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -33,7 +32,7 @@ class Repo @Inject constructor() {
 
     private val keyValueDao = KotlinStudyApplication.instance.db.keyValueDao()
 
-    fun getStoredText(): LiveData<String?> {
+    fun getStoredText(): Flow<String?> {
         return keyValueDao.getData(STORED_TEXT_KEY)
     }
 

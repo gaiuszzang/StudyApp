@@ -8,245 +8,249 @@
         <variable name="activity" type="com.lge.kotlinstudyapp.activity.MainActivity" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activity.MainActivity">
-        <TextView
-            android:id="@+id/txtProgress"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{vm.testWorkProgress}"
-            android:layout_marginTop="20dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            tools:context=".activity.MainActivity">
+            <TextView
+                android:id="@+id/txtProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.testWorkProgress}"
+                android:layout_marginTop="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txtDB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{vm.text}"
-            android:layout_marginTop="20dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtProgress" />
+            <TextView
+                android:id="@+id/txtDB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.text}"
+                android:layout_marginTop="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtProgress" />
 
-        <Button
-            android:id="@+id/btnTest1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Btn1"
-            android:onClick="@{_ -> activity.onButton1Click()}"
-            app:layout_constraintTop_toBottomOf="@id/txtDB"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            <Button
+                android:id="@+id/btnTest1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Btn1"
+                android:onClick="@{_ -> activity.onButton1Click()}"
+                app:layout_constraintTop_toBottomOf="@id/txtDB"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
-        <Button
-            android:id="@+id/btnTest2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton2Click()}"
-            android:text="Btn2"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnTest1"
-            app:layout_constraintTop_toTopOf="@+id/btnTest1" />
+            <Button
+                android:id="@+id/btnTest2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton2Click()}"
+                android:text="Btn2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnTest1"
+                app:layout_constraintTop_toTopOf="@+id/btnTest1" />
 
-        <Button
-            android:id="@+id/btnTest3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SingleTaskActivity"
-            android:onClick="@{_ -> activity.onButton3Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest1"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            <Button
+                android:id="@+id/btnTest3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SingleTaskActivity"
+                android:onClick="@{_ -> activity.onButton3Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest1"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
-        <Button
-            android:id="@+id/btnTest4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton4Click()}"
-            android:text="SingleTaskActivity For Result"
-            app:layout_constraintStart_toEndOf="@+id/btnTest3"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest1" />
+            <Button
+                android:id="@+id/btnTest4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton4Click()}"
+                android:text="SingleTaskActivity For Result"
+                app:layout_constraintStart_toEndOf="@+id/btnTest3"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest1" />
 
-        <Button
-            android:id="@+id/btnTest5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton5Click()}"
-            android:text="SingleInstance Activity"
-            app:layout_constraintHorizontal_bias="0.023"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest3" />
+            <Button
+                android:id="@+id/btnTest5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton5Click()}"
+                android:text="SingleInstance Activity"
+                app:layout_constraintHorizontal_bias="0.023"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest3" />
 
-        <Button
-            android:id="@+id/btnTest6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton6Click()}"
-            android:text="SingleInstance Activity For Result"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnTest5"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest4" />
+            <Button
+                android:id="@+id/btnTest6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton6Click()}"
+                android:text="SingleInstance Activity For Result"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnTest5"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest4" />
 
-        <Button
-            android:id="@+id/btnTest7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton7Click()}"
-            android:text="Dummy Activity"
-            app:layout_constraintHorizontal_bias="0.219"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest5" />
-        <Button
-            android:id="@+id/btnTest8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="WorkManager Start"
-            android:onClick="@{_ -> activity.onButton8Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest7"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <Button
-            android:id="@+id/btnTest9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="JobIntentService Start"
-            android:onClick="@{_ -> activity.onButton9Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest8"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <Button
-            android:id="@+id/btnTest10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ContractActivity Start"
-            android:onClick="@{_ -> activity.onButton10Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest9"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <Button
-            android:id="@+id/btnTest11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send DeviceLog"
-            android:onClick="@{_ -> activity.onButton11Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest10"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <Button
-            android:id="@+id/btnTest12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Run"
-            android:onClick="@{_ -> activity.onButton12Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest11"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <Button
-            android:id="@+id/btnTest13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop"
-            android:onClick="@{_ -> activity.onButton13Click()}"
-            app:layout_constraintTop_toBottomOf="@id/btnTest11"
-            app:layout_constraintLeft_toRightOf="@id/btnTest12"
-            app:layout_constraintRight_toRightOf="parent"/>
-        <TextView
-            android:id="@+id/txtLogWorkStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{vm.logWorkStatus}"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/btnTest11"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/btnTest12" />
+            <Button
+                android:id="@+id/btnTest7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton7Click()}"
+                android:text="Dummy Activity"
+                app:layout_constraintHorizontal_bias="0.219"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest5" />
+            <Button
+                android:id="@+id/btnTest8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WorkManager Start"
+                android:onClick="@{_ -> activity.onButton8Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest7"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/btnTest9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JobIntentService Start"
+                android:onClick="@{_ -> activity.onButton9Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest8"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/btnTest10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ContractActivity Start"
+                android:onClick="@{_ -> activity.onButton10Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest9"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/btnTest11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send DeviceLog"
+                android:onClick="@{_ -> activity.onButton11Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/btnTest12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Run"
+                android:onClick="@{_ -> activity.onButton12Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest11"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/btnTest13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop"
+                android:onClick="@{_ -> activity.onButton13Click()}"
+                app:layout_constraintTop_toBottomOf="@id/btnTest11"
+                app:layout_constraintLeft_toRightOf="@id/btnTest12"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <TextView
+                android:id="@+id/txtLogWorkStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.logWorkStatus}"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/btnTest11"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/btnTest12" />
 
-        <Button
-            android:id="@+id/btnTest14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton14Click()}"
-            android:text="Bg Service"
-            app:layout_constraintHorizontal_bias="0.283"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTest12" />
+            <Button
+                android:id="@+id/btnTest14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton14Click()}"
+                android:text="Bg Service"
+                app:layout_constraintHorizontal_bias="0.283"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest12" />
 
-        <Button
-            android:id="@+id/btnTest15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton15Click()}"
-            android:text="bg fore Service"
-            app:layout_constraintHorizontal_bias="0.107"
-            app:layout_constraintLeft_toRightOf="@id/btnTest14"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTest12" />
+            <Button
+                android:id="@+id/btnTest15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton15Click()}"
+                android:text="bg fore Service"
+                app:layout_constraintHorizontal_bias="0.107"
+                app:layout_constraintLeft_toRightOf="@id/btnTest14"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest12" />
 
-        <Button
-            android:id="@+id/btnTest16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton16Click()}"
-            android:text="Login(Fail)"
-            app:layout_constraintHorizontal_bias="0.283"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTest14" />
+            <Button
+                android:id="@+id/btnTest16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton16Click()}"
+                android:text="Login(Fail)"
+                app:layout_constraintHorizontal_bias="0.283"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest14" />
 
-        <Button
-            android:id="@+id/btnTest17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton17Click()}"
-            android:text="Login"
-            app:layout_constraintHorizontal_bias="0.253"
-            app:layout_constraintLeft_toRightOf="@id/btnTest16"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTest14" />
+            <Button
+                android:id="@+id/btnTest17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton17Click()}"
+                android:text="Login"
+                app:layout_constraintHorizontal_bias="0.253"
+                app:layout_constraintLeft_toRightOf="@id/btnTest16"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest14" />
 
-        <Button
-            android:id="@+id/btnTest18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:onClick="@{_ -> activity.onButton18Click()}"
-            android:text="PLP Show"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.299"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTest16" />
+            <Button
+                android:id="@+id/btnTest18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:onClick="@{_ -> activity.onButton18Click()}"
+                android:text="PLP Show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.299"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest16" />
 
-        <Button
-            android:id="@+id/btnTest19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButton19Click()}"
-            android:text="Music Activity Show"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnTest18"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest17" />
+            <Button
+                android:id="@+id/btnTest19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton19Click()}"
+                android:text="Music Activity Show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnTest18"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest17" />
 
-        <Button
-            android:id="@+id/btnTestUpload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{_ -> activity.onButtonUploadClick()}"
-            android:text="File Upload"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest18" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{vm.uploadProgress}"
-            android:layout_margin="10dp"
-            app:layout_constraintStart_toEndOf="@id/btnTestUpload"
-            app:layout_constraintTop_toBottomOf="@+id/btnTest19"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnTestUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButtonUploadClick()}"
+                android:text="File Upload"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest18" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.uploadProgress}"
+                android:layout_margin="10dp"
+                app:layout_constraintStart_toEndOf="@id/btnTestUpload"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest19"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>
