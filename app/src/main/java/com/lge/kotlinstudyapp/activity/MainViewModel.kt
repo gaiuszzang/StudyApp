@@ -56,4 +56,11 @@ class MainViewModel @ViewModelInject constructor(private val repo: Repo) : ViewM
             }
         }
     }
+
+    fun cancelUpload() {
+        viewModelScope.launch {
+            repo.cancelUpload()
+            uploadProgress.postValue("canceled")
+        }
+    }
 }

@@ -7,8 +7,6 @@ import androidx.databinding.DataBindingUtil
 import com.lge.kotlinstudyapp.R
 import com.lge.kotlinstudyapp.adapter.PLPMainAdapter
 import com.lge.kotlinstudyapp.databinding.PLPBind
-import com.lge.kotlinstudyapp.db.AdvertiseDto
-import com.lge.kotlinstudyapp.db.ProductDto
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

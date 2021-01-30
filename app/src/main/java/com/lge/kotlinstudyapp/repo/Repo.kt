@@ -2,20 +2,22 @@ package com.lge.kotlinstudyapp.repo
 
 import android.os.Build
 import android.os.Environment
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.lge.kotlinstudyapp.KotlinStudyApplication
 import com.lge.kotlinstudyapp.db.AdvertiseDto
 import com.lge.kotlinstudyapp.db.KeyValueData
 import com.lge.kotlinstudyapp.db.Music
-import com.lge.kotlinstudyapp.db.ProductDto
+import com.lge.kotlinstudyapp.server.data.ProductDto
 import com.lge.kotlinstudyapp.logd
 import com.lge.kotlinstudyapp.logw
-import com.lge.kotlinstudyapp.server.AcanelServer
+import com.lge.kotlinstudyapp.server.AcanelServerRetrofitService
 import com.lge.kotlinstudyapp.server.ProgressRequestBody
 import com.lge.kotlinstudyapp.server.data.DeviceLog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import com.lge.kotlinstudyapp.server.data.ItemDto
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import java.io.File
@@ -31,6 +33,8 @@ class Repo @Inject constructor() {
     }
 
     private val keyValueDao = KotlinStudyApplication.instance.db.keyValueDao()
+    private val networkSource = AcanelServerRetrofitService.service
+    private val itemPagingSource = ItemPagingSource
 
     fun getStoredText(): Flow<String?> {
         return keyValueDao.getData(STORED_TEXT_KEY)
@@ -47,25 +51,35 @@ class Repo @Inject constructor() {
         logd(TAG, "putDeviceLog() : {$datetime,  $modelName, $devStatus}")
         val deviceLog = DeviceLog(datetime, modelName, devStatus)
         try {
-            val result = AcanelServer.service.putDeviceLog(deviceLog)
+            val result = networkSource.putDeviceLog(deviceLog)
             logd(TAG, "result = ${result.result}")
         } catch (e: Exception) {
             logw(TAG, "result = Fail")
         }
     }
 
-    suspend fun uploadFile(file: File, listener: ((upsize: Long, totalsize: Long) -> Unit)?) = withContext(Dispatchers.IO) {
+    private var uploadJob : Job? = null
+    suspend fun uploadFile(file: File, listener: ((upsize: Long, totalsize: Long) -> Unit)?) = withContext(Dispatchers.Main) {
         val fileList = mutableListOf<MultipartBody.Part>()
         val fileBody = ProgressRequestBody(MediaType.parse("text/plain")!!, file, listener)
         fileList.add(MultipartBody.Part.createFormData("files", file.name, fileBody))
-        try {
-            val result = AcanelServer.service.postFile(fileList)
-            logd(TAG, "result = ${result.result}")
-        } catch (e: Exception) {
-            logw(TAG, "result = Fail")
-            e.printStackTrace()
+        uploadJob = launch(Dispatchers.IO) {
+            try {
+                val result = networkSource.postFile(fileList)
+                logd(TAG, "result = ${result.result}")
+            } catch (e: Exception) {
+                logw(TAG, "result = Fail")
+                e.printStackTrace()
+            }
+            uploadJob = null
         }
     }
+    suspend fun cancelUpload() = withContext(Dispatchers.Main) {
+        uploadJob?.cancelAndJoin()
+        uploadJob = null
+    }
+
+
 
     suspend fun getAdvertise1List() : List<AdvertiseDto> {
         delay(100)
@@ -88,24 +102,19 @@ class Repo @Inject constructor() {
     suspend fun getMainProduct1List() : List<ProductDto> {
         delay(100)
         return arrayListOf<ProductDto>(
-            ProductDto(1, "Product 1", 1000, 0),
-            ProductDto(2, "Product 2", 2000, 0),
-            ProductDto(3, "Product 3", 3000, 0),
-            ProductDto(4, "Product 4", 4000, 0),
-            ProductDto(5, "Product 5", 5000, 0),
-            ProductDto(6, "Product 6", 6000, 0)
+            ProductDto(1, null, "Product 1", 1000, 0),
+            ProductDto(2, null, "Product 2", 2000, 0),
+            ProductDto(3, null, "Product 3", 3000, 0),
+            ProductDto(4, null, "Product 4", 4000, 0),
+            ProductDto(5, null, "Product 5", 5000, 0),
+            ProductDto(6, null, "Product 6", 6000, 0)
         )
     }
 
-    suspend fun getMainProduct2List() : List<ProductDto> {
-        delay(100)
-        return arrayListOf<ProductDto>(
-            ProductDto(7, "Product 7", 7000, 0),
-            ProductDto(8, "Product 8", 8000, 0),
-            ProductDto(9, "Product 9", 9000, 0),
-            ProductDto(10, "Product 10", 10000, 0),
-            ProductDto(11, "Product 11", 11000, 0)
-        )
+    suspend fun getMainProduct2List() =  networkSource.getProductList()
+
+    fun getItemListFlow() : Flow<PagingData<ItemDto>> {
+        return Pager(PagingConfig(pageSize = 20)) { itemPagingSource }.flow
     }
 
     suspend fun getMusicList() : List<Music> {

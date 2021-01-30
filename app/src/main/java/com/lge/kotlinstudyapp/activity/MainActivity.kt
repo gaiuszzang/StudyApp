@@ -122,6 +122,10 @@ class MainActivity : AppCompatActivity() {
         vm.uploadFile()
     }
 
+    fun onButtonUploadCancelClick() {
+        vm.cancelUpload()
+    }
+
     fun onButton8Click() {
         val testWork = OneTimeWorkRequestBuilder<TestWorker>()
                         .setInputData(workDataOf("LOOP_TIME" to 30))
@@ -197,6 +201,10 @@ class MainActivity : AppCompatActivity() {
     }
     fun onButton18Click() {
         val intent = Intent(this, PLPActivity::class.java)
+        startActivity(intent)
+    }
+    fun onButton18aClick() {
+        val intent = Intent(this, ILPActivity::class.java)
         startActivity(intent)
     }
     fun onButton19Click() {

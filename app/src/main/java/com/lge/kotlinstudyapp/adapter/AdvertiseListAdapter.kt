@@ -3,11 +3,11 @@ package com.lge.kotlinstudyapp.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lge.kotlinstudyapp.R
 import com.lge.kotlinstudyapp.databinding.AdvertiseViewBind
 import com.lge.kotlinstudyapp.db.AdvertiseDto
-import com.lge.kotlinstudyapp.db.ProductDto
 
 class AdvertiseListAdapter : RecyclerView.Adapter<AdvertiseListAdapter.AdvertiseListViewHolder>() {
     private val advertiseList = arrayListOf<AdvertiseDto>()
@@ -25,8 +25,22 @@ class AdvertiseListAdapter : RecyclerView.Adapter<AdvertiseListAdapter.Advertise
     override fun getItemCount(): Int = advertiseList.size
 
     fun setAdvertiseList(list : List<AdvertiseDto>) {
+        val diffCallback = AdvertiseDiffCallback(advertiseList, list)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
         advertiseList.clear()
         advertiseList.addAll(list)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    class AdvertiseDiffCallback(private val oldList: List<AdvertiseDto>, val newList: List<AdvertiseDto>) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
+        override fun getNewListSize(): Int = newList.size
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].advertiseId == newList[newItemPosition].advertiseId
+        }
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].advertiseId == newList[newItemPosition].advertiseId
+        }
+
     }
 }

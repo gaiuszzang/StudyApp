@@ -9,7 +9,7 @@ import com.lge.kotlinstudyapp.R
 import com.lge.kotlinstudyapp.databinding.AdvertiseListViewBind
 import com.lge.kotlinstudyapp.databinding.ProductListViewBind
 import com.lge.kotlinstudyapp.db.AdvertiseDto
-import com.lge.kotlinstudyapp.db.ProductDto
+import com.lge.kotlinstudyapp.server.data.ProductDto
 
 class PLPMainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
@@ -21,26 +21,28 @@ class PLPMainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     data class PLPItem(@PLPViewType val viewType: Int,
                        val advertiseList : List<AdvertiseDto>? = null,
+                       val productListTitle : String? = null,
                        val productList : List<ProductDto>? = null)
 
     private val plpList = arrayListOf<PLPItem>()
 
     inner class AdvertiseListViewHolder(private val bind: AdvertiseListViewBind) : RecyclerView.ViewHolder(bind.root) {
         fun setAdvertiseList(list : List<AdvertiseDto>) {
-            (bind.recyclerView.adapter as AdvertiseListAdapter).setAdvertiseList(list)
+            (bind.viewPager.adapter as AdvertiseListAdapter).setAdvertiseList(list)
         }
     }
 
     inner class ProductListViewHolder(private val bind: ProductListViewBind) : RecyclerView.ViewHolder(bind.root) {
-        fun setProductList(list : List<ProductDto>) {
+        fun setProductList(title: String?, list : List<ProductDto>) {
             (bind.recyclerView.adapter as ProductListAdapter).setProductList(list)
+            bind.txtProductListTitle.text = title
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_ADVERTISE_LIST) {
             val bind: AdvertiseListViewBind = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.view_advertiselist, parent, false)
-            bind.recyclerView.adapter = AdvertiseListAdapter()
+            bind.viewPager.adapter = AdvertiseListAdapter()
             AdvertiseListViewHolder(bind)
         } else {// if (viewType == VIEW_TYPE_PRODUCT_LIST) {
             val bind: ProductListViewBind = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.view_productlist, parent, false)
@@ -53,7 +55,7 @@ class PLPMainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (holder.itemViewType == VIEW_TYPE_ADVERTISE_LIST) {
             (holder as AdvertiseListViewHolder).setAdvertiseList(plpList[position].advertiseList!!)
         } else { //if (holder.itemViewType == VIEW_TYPE_PRODUCT_LIST) {
-            (holder as ProductListViewHolder).setProductList(plpList[position].productList!!)
+            (holder as ProductListViewHolder).setProductList(plpList[position].productListTitle, plpList[position].productList!!)
         }
     }
 

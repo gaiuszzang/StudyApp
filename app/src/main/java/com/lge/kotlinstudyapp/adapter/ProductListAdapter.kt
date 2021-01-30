@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.lge.kotlinstudyapp.R
 import com.lge.kotlinstudyapp.databinding.ProductViewBind
-import com.lge.kotlinstudyapp.db.ProductDto
+import com.lge.kotlinstudyapp.server.data.ProductDto
 
 class ProductListAdapter : RecyclerView.Adapter<ProductListAdapter.ProductListViewHolder>() {
     private val productList = arrayListOf<ProductDto>()
@@ -14,6 +15,9 @@ class ProductListAdapter : RecyclerView.Adapter<ProductListAdapter.ProductListVi
         fun setView(item: ProductDto) {
             bind.productPrice.text = item.productPrice.toString()
             bind.productName.text = item.productName
+            item.productImgUrl?.let {
+                Glide.with(bind.root).load(item.productImgUrl).into(bind.productImage)
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductListViewHolder {

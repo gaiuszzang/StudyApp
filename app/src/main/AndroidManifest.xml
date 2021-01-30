@@ -39,6 +39,9 @@
         <activity
             android:name=".activity.PLPActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.ILPActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.MusicActivity"/>
         <service
             android:name=".service.TestJobIntentService"

@@ -217,11 +217,21 @@
                 android:id="@+id/btnTest18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 android:onClick="@{_ -> activity.onButton18Click()}"
                 android:text="PLP Show"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.299"
+                app:layout_constraintHorizontal_bias="0.015"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest16" />
+
+            <Button
+                android:id="@+id/btnTest18A"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton18aClick()}"
+                android:text="ILP Show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.35"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnTest16" />
 
@@ -232,6 +242,7 @@
                 android:onClick="@{_ -> activity.onButton19Click()}"
                 android:text="Music Activity Show"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.898"
                 app:layout_constraintStart_toEndOf="@+id/btnTest18"
                 app:layout_constraintTop_toBottomOf="@+id/btnTest17" />
 
@@ -243,6 +254,14 @@
                 android:text="File Upload"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTest18" />
+            <Button
+                android:id="@+id/btnTestUploadCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButtonUploadCancelClick()}"
+                android:text="Cancel Upload"
+                app:layout_constraintEnd_toStartOf="@id/btnTestUpload"
                 app:layout_constraintTop_toBottomOf="@+id/btnTest18" />
             <TextView
                 android:layout_width="wrap_content"

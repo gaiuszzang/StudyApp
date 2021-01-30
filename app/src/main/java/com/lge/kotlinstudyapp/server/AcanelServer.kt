@@ -1,13 +1,25 @@
 package com.lge.kotlinstudyapp.server
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.lge.kotlinstudyapp.server.data.DeviceLog
+import com.lge.kotlinstudyapp.server.data.ItemDto
+import com.lge.kotlinstudyapp.server.data.PostResult
+import com.lge.kotlinstudyapp.server.data.ProductDto
+import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.*
 
-object AcanelServer {
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("http://acanel.xyz:9105/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+interface AcanelServer {
+    @POST("device/log")
+    suspend fun putDeviceLog(@Body deviceLog: DeviceLog) : PostResult
 
-    val service = retrofit.create(AcanelServerRetrofitService::class.java)
+    @Multipart
+    @POST("file")
+    suspend fun postFile(@Part uploadFiles: List<MultipartBody.Part>): PostResult
+
+    @GET("product/list")
+    suspend fun getProductList() : List<ProductDto>
+
+    @GET("item/list")
+    suspend fun getItemList(@Query("pageId") pageId: Int) : List<ItemDto>
 }
