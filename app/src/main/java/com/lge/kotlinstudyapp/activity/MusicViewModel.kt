@@ -1,12 +1,14 @@
 package com.lge.kotlinstudyapp.activity
 
 import android.media.session.PlaybackState
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.lge.kotlinstudyapp.usecase.MusicActivityUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MusicViewModel @ViewModelInject constructor(private val useCase: MusicActivityUseCase) : ViewModel() {
+@HiltViewModel
+class MusicViewModel @Inject constructor(private val useCase: MusicActivityUseCase) : ViewModel() {
     companion object {
         private const val TAG = "MusicViewModel"
     }

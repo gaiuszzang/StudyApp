@@ -1,13 +1,15 @@
 package com.lge.kotlinstudyapp.activity
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lge.kotlinstudyapp.usecase.PLPUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PLPViewModel @ViewModelInject constructor(private val useCase: PLPUseCase): ViewModel() {
+@HiltViewModel
+class PLPViewModel @Inject constructor(private val useCase: PLPUseCase): ViewModel() {
     val plpList = useCase.getPLPListLiveData()
 
     fun updatePLPList() {

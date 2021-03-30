@@ -1,7 +1,6 @@
 package com.lge.kotlinstudyapp.activity
 
 import android.os.Environment
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -10,11 +9,14 @@ import com.lge.kotlinstudyapp.logd
 import com.lge.kotlinstudyapp.repo.Repo
 import com.lge.kotlinstudyapp.worker.LogWorker
 import com.lge.kotlinstudyapp.worker.TestWorker
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class MainViewModel @ViewModelInject constructor(private val repo: Repo) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(private val repo: Repo) : ViewModel() {
     companion object {
         private const val TAG = "MainViewModel"
     }
