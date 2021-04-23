@@ -31,6 +31,7 @@
             android:layout_height="0dp"
             android:src="@color/colorAccent"
             android:scaleType="centerCrop"
+            android:foreground="?android:selectableItemBackground"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

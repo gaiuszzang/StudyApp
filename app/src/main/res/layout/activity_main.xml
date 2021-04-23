@@ -123,15 +123,28 @@
                 app:layout_constraintTop_toBottomOf="@id/btnTest8"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
+
             <Button
                 android:id="@+id/btnTest10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ContractActivity Start"
                 android:onClick="@{_ -> activity.onButton10Click()}"
-                app:layout_constraintTop_toBottomOf="@id/btnTest9"
+                android:text="ContractActivity Start"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest9" />
+
+            <Button
+                android:id="@+id/btnTest10m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_ -> activity.onButton10TClick()}"
+                android:text="ContractActivityT Start"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnTest9" />
             <Button
                 android:id="@+id/btnTest11"
                 android:layout_width="wrap_content"

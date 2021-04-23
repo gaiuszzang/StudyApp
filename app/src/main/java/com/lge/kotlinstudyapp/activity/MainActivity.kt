@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.work.*
+import com.digitopath.studylibrary.activity.TestContractActivity
 import com.lge.kotlinstudyapp.*
 import com.lge.kotlinstudyapp.R
 import com.lge.kotlinstudyapp.databinding.MainBind
@@ -143,6 +144,10 @@ class MainActivity : AppCompatActivity() {
 
     fun onButton10Click() {
         val intent = Intent(this, ContractActivity::class.java)
+        startActivity(intent)
+    }
+    fun onButton10TClick() {
+        val intent = Intent(this, TestContractActivity::class.java)
         startActivity(intent)
     }
 

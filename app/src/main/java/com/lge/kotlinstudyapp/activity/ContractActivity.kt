@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.digitopath.studylibrary.TestModule
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -30,10 +31,12 @@ class ContractActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logi(TAG, "onCreate()")
+        logi(TAG, "onCreate(LAYOUT ID : ${R.layout.activity_contract})")
         setContentView(R.layout.activity_contract)
         val btn1 = findViewById<Button>(R.id.btn1)
         btn1.setOnClickListener {
+            val module = TestModule()
+            Toast.makeText(this, "TestModule Result = ${module.getVersion(this)}\n", Toast.LENGTH_SHORT).show()
             checkPermAndGetContract()
         }
         listView = findViewById(R.id.listContract)

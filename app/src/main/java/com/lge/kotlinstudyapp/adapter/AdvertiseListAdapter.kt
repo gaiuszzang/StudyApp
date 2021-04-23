@@ -2,6 +2,7 @@ package com.lge.kotlinstudyapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,9 @@ class AdvertiseListAdapter : RecyclerView.Adapter<AdvertiseListAdapter.Advertise
     inner class AdvertiseListViewHolder(private val bind: AdvertiseViewBind) : RecyclerView.ViewHolder(bind.root) {
         fun setView(item: AdvertiseDto) {
             bind.advertiseName.text = item.advertiseTitle
+            bind.advertiseImage.setOnClickListener {
+                Toast.makeText(bind.root.context, "Url : ${item.advertiseLink}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdvertiseListViewHolder {

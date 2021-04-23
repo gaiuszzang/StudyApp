@@ -2,6 +2,7 @@ package com.lge.kotlinstudyapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,6 +16,9 @@ class ProductListAdapter : RecyclerView.Adapter<ProductListAdapter.ProductListVi
         fun setView(item: ProductDto) {
             bind.productPrice.text = item.productPrice.toString()
             bind.productName.text = item.productName
+            bind.productImage.setOnClickListener {
+                Toast.makeText(bind.root.context, "Url : ${item.productImgUrl ?: "null"}", Toast.LENGTH_SHORT).show()
+            }
             item.productImgUrl?.let {
                 Glide.with(bind.root).load(item.productImgUrl).into(bind.productImage)
             }

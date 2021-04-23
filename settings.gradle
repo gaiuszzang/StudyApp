@@ -1,2 +1,3 @@
+include ':studylibrary'
 rootProject.name='KotlinStudyApp'
 include ':app'
