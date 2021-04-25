@@ -1,6 +1,7 @@
 package com.lge.kotlinstudyapp.activity
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -32,7 +33,6 @@ class PLPActivity : AppCompatActivity() {
         bind.activity = this
         bind.vm = viewModel
         bind.recyclerView.adapter = plpAdapter
-        //bind.recyclerView.addOnItemTouchListener(SmoothCrossTouchListener(bind.recyclerView))
         bind.recyclerView.addOnItemTouchListener(SmoothCrossTouchListener())
         viewModel.plpList.observe(this) { plpList -> plpAdapter.setPLPList(plpList) }
     }
@@ -42,89 +42,60 @@ class PLPActivity : AppCompatActivity() {
         super.onResume()
     }
 
+    //---
     class SmoothCrossTouchListener : RecyclerView.OnItemTouchListener {
-        private val blockChildViewList = mutableListOf<View>()
+        private val viewClickEventBlocker = ViewClickEventBlocker()
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             if (e.action == MotionEvent.ACTION_DOWN  && rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
-                blockChildViewClick(rv.findChildViewUnder(e.x, e.y))
+                viewClickEventBlocker.blockChildViewClick(rv.findChildViewUnder(e.x, e.y))
                 rv.stopScroll()
-            }
-            if (e. action == MotionEvent.ACTION_UP) {
-                allowChildViewClick()
             }
             return false
         }
 
         override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-            Log.d(TAG, "onTouchEvent() : ${e.action}")
+            //nothing to do
         }
 
         override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-            Log.d(TAG, "onRequestDisallowInterceptTouchEvent : $disallowIntercept")
-            allowChildViewClick()
+            //nothing to do
         }
 
-        @MainThread
-        private fun blockChildViewClick(view: View?) {
-            if (view != null && blockChildViewList.isEmpty()) {
-                Log.d(TAG, "childView Disable")
-                collectAndBlockChildViewClick(view)
-            } else {
-                Log.e(TAG, "childView Disable - failed. already disabled")
-            }
-        }
 
-        @MainThread
-        private fun allowChildViewClick() {
-            if (blockChildViewList.isNotEmpty()) {
-                Log.d(TAG, "childView Enable")
-                for (view in blockChildViewList) {
-                    view.isClickable = true
+        inner class ViewClickEventBlocker {
+            private val blockChildViewList = mutableListOf<View>()
+
+            @MainThread
+            fun blockChildViewClick(view: View?) {
+                if (view != null && blockChildViewList.isEmpty()) {
+                    collectAndBlockChildViewClick(view)
+                    //Need to release the block immediately afterwards, that's why postAtFrontOfQueue
+                    Handler(view.context.mainLooper).postAtFrontOfQueue {
+                        allowChildViewClick()
+                    }
                 }
-                blockChildViewList.clear()
-            } else {
-                Log.w(TAG, "childView Enable - failed. already cleared")
             }
-        }
 
-        @MainThread
-        private fun collectAndBlockChildViewClick(view: View) {
-            if (view.isClickable) {
-                blockChildViewList.add(view)
-                view.isClickable = false
+            @MainThread
+            fun allowChildViewClick() {
+                if (blockChildViewList.isNotEmpty()) {
+                    for (view in blockChildViewList) {
+                        view.isEnabled = true
+                    }
+                    blockChildViewList.clear()
+                }
             }
-            if (view is ViewGroup) {
-                view.forEach { collectAndBlockChildViewClick(it) }
+
+            @MainThread
+            fun collectAndBlockChildViewClick(view: View) {
+                if (view.isClickable && view.isEnabled) {
+                    blockChildViewList.add(view)
+                    view.isEnabled = false
+                }
+                if (view is ViewGroup) {
+                    view.forEach { collectAndBlockChildViewClick(it) }
+                }
             }
         }
     }
-    /*
-    class SmoothCrossTouchListener(recyclerView: RecyclerView) : RecyclerView.OnItemTouchListener {
-        var scrollSpeed = 0
-        val scrollSpeedListener = object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                scrollSpeed = Math.abs(dy)
-                Log.d(TAG, "scrollSpeeed = $scrollSpeed")
-                super.onScrolled(recyclerView, dx, dy)
-            }
-        }
-        init {
-            recyclerView.addOnScrollListener(scrollSpeedListener)
-        }
-        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            if (e.action == MotionEvent.ACTION_DOWN  && rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING && scrollSpeed < 60) {
-                Log.d(TAG, "stopSettingScroll Cancel")
-                rv.stopScroll()
-            }
-            return false
-        }
-
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-            Log.d(TAG, "onTouchEvent() : ${e.action}")
-        }
-
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-            Log.d(TAG, "onRequestDisallowInterceptTouchEvent : $disallowIntercept")
-        }
-    }*/
 }

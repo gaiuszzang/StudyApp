@@ -20,9 +20,15 @@ class PLPUseCase @Inject constructor(private val repo: Repo) {
         val prd1Defer = async(Dispatchers.IO) { return@async repo.getMainProduct1List() }
         val prd2Defer = async(Dispatchers.IO) { return@async repo.getMainProduct2List() }
         list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ADVERTISE_LIST, advertiseList = adv1Defer.await()))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "First Item Description"))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "Second Item Description"))
         list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_PRODUCT_LIST, productListTitle = "ProductList 1", productList = prd1Defer.await()))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "Third Item Description"))
         list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_PRODUCT_LIST, productListTitle = "ProductList 2", productList = prd2Defer.await()))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "Fourth Item Description"))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "Fifth Item Description"))
         list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ADVERTISE_LIST, advertiseList = adv2Defer.await()))
+        list.add(PLPMainAdapter.PLPItem(PLPMainAdapter.VIEW_TYPE_ITEM, desc = "Sixth Item Description"))
         plpListLiveData.value = list
     }
 }
